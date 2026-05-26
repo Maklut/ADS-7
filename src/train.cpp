@@ -38,42 +38,53 @@ int Train::getLength() {
   if (first == nullptr) return 0;
 
   countOp = 0;
+  int length = 0;
 
-  // Классический алгоритм: включаем свет, идем вперед,
-  // выключаем свет в новых вагонах, считаем шаги
-  first->light = true;
+  // Выключаем свет во всех вагонах (сбрасываем состояние)
   Car* current = first;
-  int steps = 0;
-
-  while (true) {
+  do {
+    current->light = false;
     current = current->next;
     countOp++;
-    steps++;
+  } while (current != first);
 
+  // Включаем свет в текущем вагоне
+  first->light = true;
+  current = first;
+
+  while (true) {
+    // Перемещаемся вперед
+    current = current->next;
+    countOp++;
+    length++;
+
+    // Если свет выключен, включаем его и сбрасываем счетчик
     if (!current->light) {
       current->light = true;
-      steps = 0;
+      length = 0;
     } else {
-      // Нашли вагон с включенным светом
-      // Проверяем, не вернулись ли в начало
-      Car* temp = current;
-      int backSteps = 0;
+      // Нашли включенный свет - проверяем, не вернулись ли в начало
+      Car* backward = current;
+      int backwardSteps = 0;
+      bool foundFirst = false;
 
-      while (temp != first && backSteps < steps) {
-        temp = temp->prev;
+      for (int i = 0; i < length; i++) {
+        backward = backward->prev;
+        backwardSteps++;
         countOp++;
-        backSteps++;
+        if (backward == first) {
+          foundFirst = true;
+          break;
+        }
       }
 
-      if (temp == first && backSteps == steps) {
+      if (foundFirst && backwardSteps == length && backward == first) {
         break;
       }
     }
   }
 
-  first->light = false;
-
-  return steps;
+  return length;
 }
 
 int Train::getOpCount() {
