@@ -2,6 +2,8 @@
 #ifndef INCLUDE_TRAIN_H_
 #define INCLUDE_TRAIN_H_
 
+#include <cstddef>
+
 class Train {
  private:
   struct Car {
@@ -14,6 +16,7 @@ class Train {
 
  public:
   Train();
+  ~Train();
   void addCar(bool light);
   int getLength();
   int getOpCount();
