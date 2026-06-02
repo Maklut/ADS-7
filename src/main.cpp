@@ -27,6 +27,7 @@ int main() {
   std::uniform_int_distribution<> dist(0, 1);
 
   std::cout << "=== Вычислительный эксперимент ===\n";
+  std::cout << "Тестирование длин поезда от 2 до 100\n\n";
 
   for (int n = 2; n <= 100; n += 2) {
     sizes.push_back(n);
@@ -62,7 +63,11 @@ int main() {
   saveData("result/all_on.dat", sizes, ops_all_on);
   saveData("result/random.dat", sizes, ops_random);
 
-  std::cout << "\nExperiment completed!\n";
+  std::cout << "\n=== Эксперимент завершен ===\n";
+  std::cout << "Данные сохранены в файлы:\n";
+  std::cout << "  - result/all_off.dat\n";
+  std::cout << "  - result/all_on.dat\n";
+  std::cout << "  - result/random.dat\n";
 
   return 0;
 }
