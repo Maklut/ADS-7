@@ -36,55 +36,53 @@ void Train::addCar(bool light) {
 
 int Train::getLength() {
   if (first == nullptr) return 0;
-
+  
   countOp = 0;
-  int length = 0;
-
-  // Выключаем свет во всех вагонах (сбрасываем состояние)
+  
+  // Сбрасываем все лампочки в исходное состояние (выключаем)
   Car* current = first;
   do {
     current->light = false;
     current = current->next;
     countOp++;
   } while (current != first);
-
+  
   // Включаем свет в текущем вагоне
   first->light = true;
   current = first;
-
+  int steps = 0;
+  
   while (true) {
-    // Перемещаемся вперед
+    // Переходим в следующий вагон
     current = current->next;
     countOp++;
-    length++;
-
-    // Если свет выключен, включаем его и сбрасываем счетчик
+    steps++;
+    
+    // Если свет выключен, включаем и начинаем отсчет заново
     if (!current->light) {
       current->light = true;
-      length = 0;
-    } else {
-      // Нашли включенный свет - проверяем, не вернулись ли в начало
-      Car* backward = current;
-      int backwardSteps = 0;
-      bool foundFirst = false;
-
-      for (int i = 0; i < length; i++) {
-        backward = backward->prev;
-        backwardSteps++;
-        countOp++;
-        if (backward == first) {
-          foundFirst = true;
-          break;
-        }
-      }
-
-      if (foundFirst && backwardSteps == length && backward == first) {
-        break;
-      }
+      steps = 0;
+      continue;
+    }
+    
+    // Нашли вагон с включенным светом
+    // Проверяем, не вернулись ли мы в начало
+    Car* test = current;
+    int backSteps = 0;
+    
+    for (int i = 0; i < steps; i++) {
+      test = test->prev;
+      backSteps++;
+      countOp++;
+    }
+    
+    if (test == first && backSteps == steps) {
+      // Успешно вернулись в начало
+      break;
     }
   }
-
-  return length;
+  
+  return steps;
 }
 
 int Train::getOpCount() {
