@@ -51,9 +51,8 @@ int Train::getLength() {
   first->light = true;
   current = first;
   int length = 0;
-  int maxAttempts = 10000;
 
-  for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+  while (true) {
     current = current->next;
     countOp++;
     length++;
@@ -64,23 +63,22 @@ int Train::getLength() {
       continue;
     }
 
-    // Проверяем, вернулись ли в начало
-    Car* ptr = current;
-    int steps = 0;
+    // cppcheck-suppress constVariablePointer
+    Car* temp = current;
+    int backSteps = 0;
 
-    for (int i = 0; i < length; i++) {
-      ptr = ptr->prev;
-      steps++;
+    while (temp != first && backSteps < length) {
+      temp = temp->prev;
+      backSteps++;
       countOp++;
-      if (ptr == first) break;
     }
 
-    if (ptr == first && steps == length) {
-      return length;
+    if (temp == first && backSteps == length) {
+      break;
     }
   }
 
-  return 0;
+  return length;
 }
 
 int Train::getOpCount() {
