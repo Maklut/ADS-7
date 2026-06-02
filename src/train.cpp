@@ -39,48 +39,44 @@ int Train::getLength() {
 
   countOp = 0;
 
-  // Запоминаем состояние первого вагона
-  bool firstLightState = first->light;
-  
+  // Сбрасываем все лампочки
+  Car* current = first;
+  do {
+    current->light = false;
+    current = current->next;
+    countOp++;
+  } while (current != first);
+
   // Включаем свет в первом вагоне
   first->light = true;
-  
-  Car* current = first;
+  current = first;
   int length = 0;
-  bool found = false;
 
-  while (!found) {
+  while (true) {
     current = current->next;
     countOp++;
     length++;
 
     if (!current->light) {
-      // Выключаем свет в этом вагоне
       current->light = true;
       length = 0;
-    } else {
-      // Проверяем, не вернулись ли в начало
-      Car* back = current;
-      int steps = 0;
-      
-      for (int i = 0; i < length; i++) {
-        back = back->prev;
-        steps++;
-        countOp++;
-        if (back == first) {
-          if (steps == length) {
-            found = true;
-          }
-          break;
-        }
-      }
+      continue;
+    }
+
+    // Проверяем, вернулись ли в начало
+    Car* backward = current;
+    int steps = 0;
+    
+    while (backward != first && steps < length) {
+      backward = backward->prev;
+      steps++;
+      countOp++;
+    }
+    
+    if (backward == first && steps == length) {
+      return length;
     }
   }
-
-  // Восстанавливаем состояние первого вагона
-  first->light = firstLightState;
-  
-  return length;
 }
 
 int Train::getOpCount() {
