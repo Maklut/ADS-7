@@ -39,50 +39,48 @@ int Train::getLength() {
 
   countOp = 0;
 
-  // Шаг 1: Выключаем свет во всех вагонах
+  // Запоминаем состояние первого вагона
+  bool firstLightState = first->light;
+  
+  // Включаем свет в первом вагоне
+  first->light = true;
+  
   Car* current = first;
-  do {
-    current->light = false;
+  int length = 0;
+  bool found = false;
+
+  while (!found) {
     current = current->next;
     countOp++;
-  } while (current != first);
+    length++;
 
-  // Шаг 2: Включаем свет в первом вагоне
-  first->light = true;
-  current = first;
-  int length = 0;
-
-  // Шаг 3: Алгоритм поиска длины
-  while (true) {
-    // Идем вперед, пока не встретим вагон с выключенным светом
-    while (true) {
-      current = current->next;
-      countOp++;
-      length++;
-
-      if (!current->light) {
-        // Включаем свет в этом вагоне
-        current->light = true;
-        length = 0;
-        break;
-      } else {
-        // Нашли включенный свет, проверяем
-        Car* test = current;
-        int backSteps = 0;
-        
-        for (int i = 0; i < length; i++) {
-          test = test->prev;
-          backSteps++;
-          countOp++;
-          if (test == first) break;
-        }
-        
-        if (test == first && backSteps == length) {
-          return length;
+    if (!current->light) {
+      // Выключаем свет в этом вагоне
+      current->light = true;
+      length = 0;
+    } else {
+      // Проверяем, не вернулись ли в начало
+      Car* back = current;
+      int steps = 0;
+      
+      for (int i = 0; i < length; i++) {
+        back = back->prev;
+        steps++;
+        countOp++;
+        if (back == first) {
+          if (steps == length) {
+            found = true;
+          }
+          break;
         }
       }
     }
   }
+
+  // Восстанавливаем состояние первого вагона
+  first->light = firstLightState;
+  
+  return length;
 }
 
 int Train::getOpCount() {
