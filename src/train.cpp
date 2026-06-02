@@ -50,35 +50,34 @@ int Train::getLength() {
   // Включаем свет в первом вагоне
   first->light = true;
   current = first;
-  int length = 0;
+  int steps = 0;
 
   while (true) {
     current = current->next;
     countOp++;
-    length++;
+    steps++;
 
     if (!current->light) {
       current->light = true;
-      length = 0;
+      steps = 0;
       continue;
     }
 
+    // Проверяем, вернулись ли в начало
     // cppcheck-suppress constVariablePointer
-    Car* temp = current;
-    int backSteps = 0;
+    Car* check = current;
+    int back = 0;
 
-    while (temp != first && backSteps < length) {
-      temp = temp->prev;
-      backSteps++;
+    for (int i = 0; i < steps; i++) {
+      check = check->prev;
+      back++;
       countOp++;
     }
 
-    if (temp == first && backSteps == length) {
-      break;
+    if (check == first && back == steps) {
+      return steps;
     }
   }
-
-  return length;
 }
 
 int Train::getOpCount() {
