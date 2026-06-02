@@ -39,7 +39,7 @@ int Train::getLength() {
 
   countOp = 0;
 
-  // Выключаем свет во всех вагонах
+  // Сначала выключаем свет во всех вагонах
   Car* current = first;
   do {
     current->light = false;
@@ -47,35 +47,39 @@ int Train::getLength() {
     countOp++;
   } while (current != first);
 
-  // Включаем свет в первом вагоне
+  // Включаем свет в текущем вагоне
   first->light = true;
   current = first;
-  int steps = 0;
+  int length = 0;
 
   while (true) {
+    // Делаем шаг вперед
     current = current->next;
     countOp++;
-    steps++;
+    length++;
 
     if (!current->light) {
+      // Включаем свет в этом вагоне
       current->light = true;
-      steps = 0;
-      continue;
-    }
+      length = 0;
+    } else {
+      // Нашли включенный свет
+      // Идем назад, проверяя, не вернулись ли в начало
+      Car* back = current;
+      int stepBack = 0;
 
-    // Проверяем, вернулись ли в начало
-    // cppcheck-suppress constVariablePointer
-    Car* check = current;
-    int back = 0;
+      for (int i = 0; i < length; i++) {
+        back = back->prev;
+        stepBack++;
+        countOp++;
+        if (back == first) {
+          break;
+        }
+      }
 
-    for (int i = 0; i < steps; i++) {
-      check = check->prev;
-      back++;
-      countOp++;
-    }
-
-    if (check == first && back == steps) {
-      return steps;
+      if (back == first && stepBack == length) {
+        return length;
+      }
     }
   }
 }
