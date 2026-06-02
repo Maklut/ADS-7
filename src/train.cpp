@@ -39,7 +39,7 @@ int Train::getLength() {
 
   countOp = 0;
 
-  // Выключаем свет во всех вагонах
+  // Сначала выключаем свет во всех вагонах
   Car* current = first;
   do {
     current->light = false;
@@ -47,39 +47,43 @@ int Train::getLength() {
     countOp++;
   } while (current != first);
 
-  // Включаем свет в первом вагоне
+  // Включаем свет в текущем вагоне
   first->light = true;
   current = first;
-  int length = 0;
+  int steps = 0;
 
-  // Ищем длину поезда
+  // Начинаем движение
   while (true) {
+    // Переходим в следующий вагон
     current = current->next;
     countOp++;
-    length++;
+    steps++;
 
-    if (!current->light) {
+    // Если свет выключен - включаем и начинаем отсчет заново
+    if (current->light == false) {
       current->light = true;
-      length = 0;
+      steps = 0;
       continue;
     }
 
-    // Проверяем, не вернулись ли в начало
-    Car* testCar = current;
-    int backSteps = 0;
+    // Нашли включенный свет. Проверяем, не вернулись ли в начало
+    // Идем назад на steps шагов
+    Car* back = current;
+    int backCount = 0;
 
-    while (backSteps < length && testCar != first) {
-      testCar = testCar->prev;
-      backSteps++;
+    for (int i = 0; i < steps; i++) {
+      back = back->prev;
+      backCount++;
       countOp++;
     }
 
-    if (testCar == first && backSteps == length) {
+    // Если вернулись в начало - длина найдена
+    if (back == first && backCount == steps) {
       break;
     }
   }
 
-  return length;
+  return steps;
 }
 
 int Train::getOpCount() {
