@@ -1,5 +1,6 @@
 // Copyright 2022 NNTU-CS
 #include <iostream>
+#include <string>
 #include <vector>
 #include <random>
 #include <fstream>
@@ -36,7 +37,7 @@ int main() {
     for (int i = 0; i < n; i++) {
       train1.addCar(false);
     }
-    int len1 = train1.getLength();
+    train1.getLength();
     int ops1 = train1.getOpCount();
     ops_all_off.push_back(ops1);
 
@@ -45,7 +46,7 @@ int main() {
     for (int i = 0; i < n; i++) {
       train2.addCar(true);
     }
-    int len2 = train2.getLength();
+    train2.getLength();
     int ops2 = train2.getOpCount();
     ops_all_on.push_back(ops2);
 
@@ -54,7 +55,7 @@ int main() {
     for (int i = 0; i < n; i++) {
       train3.addCar(dist(gen) == 1);
     }
-    int len3 = train3.getLength();
+    train3.getLength();
     int ops3 = train3.getOpCount();
     ops_random.push_back(ops3);
 
