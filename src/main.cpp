@@ -27,7 +27,6 @@ int main() {
   std::uniform_int_distribution<> dist(0, 1);
 
   std::cout << "=== Вычислительный эксперимент ===\n";
-  std::cout << "Тестирование длин поезда от 2 до 100\n\n";
 
   for (int n = 2; n <= 100; n += 2) {
     sizes.push_back(n);
@@ -38,8 +37,7 @@ int main() {
       train1.addCar(false);
     }
     train1.getLength();
-    int ops1 = train1.getOpCount();
-    ops_all_off.push_back(ops1);
+    ops_all_off.push_back(train1.getOpCount());
 
     // Тест 2: все лампочки включены
     Train train2;
@@ -47,8 +45,7 @@ int main() {
       train2.addCar(true);
     }
     train2.getLength();
-    int ops2 = train2.getOpCount();
-    ops_all_on.push_back(ops2);
+    ops_all_on.push_back(train2.getOpCount());
 
     // Тест 3: случайное распределение
     Train train3;
@@ -56,25 +53,16 @@ int main() {
       train3.addCar(dist(gen) == 1);
     }
     train3.getLength();
-    int ops3 = train3.getOpCount();
-    ops_random.push_back(ops3);
+    ops_random.push_back(train3.getOpCount());
 
-    std::cout << "n=" << n
-              << " | all_off: " << ops1
-              << " | all_on: " << ops2
-              << " | random: " << ops3 << "\n";
+    std::cout << "n=" << n << " complete\n";
   }
 
-  // Сохраняем данные
   saveData("result/all_off.dat", sizes, ops_all_off);
   saveData("result/all_on.dat", sizes, ops_all_on);
   saveData("result/random.dat", sizes, ops_random);
 
-  std::cout << "\n=== Эксперимент завершен ===\n";
-  std::cout << "Данные сохранены в файлы:\n";
-  std::cout << "  - result/all_off.dat\n";
-  std::cout << "  - result/all_on.dat\n";
-  std::cout << "  - result/random.dat\n";
+  std::cout << "\nExperiment completed!\n";
 
   return 0;
 }
