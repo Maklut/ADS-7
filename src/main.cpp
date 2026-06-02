@@ -1,6 +1,5 @@
 // Copyright 2022 NNTU-CS
 #include <iostream>
-#include <string>
 #include <vector>
 #include <random>
 #include <fstream>
@@ -60,9 +59,9 @@ int main() {
     ops_random.push_back(ops3);
 
     std::cout << "n=" << n
-              << " | len1=" << len1 << " ops1=" << ops1
-              << " | len2=" << len2 << " ops2=" << ops2
-              << " | len3=" << len3 << " ops3=" << ops3 << "\n";
+              << " | all_off: " << ops1
+              << " | all_on: " << ops2
+              << " | random: " << ops3 << "\n";
   }
 
   // Сохраняем данные
@@ -70,37 +69,11 @@ int main() {
   saveData("result/all_on.dat", sizes, ops_all_on);
   saveData("result/random.dat", sizes, ops_random);
 
-  // Создаем Python скрипт для построения графика
-  std::ofstream pyScript("result/plot.py");
-  pyScript << "import matplotlib.pyplot as plt\n"
-           << "import numpy as np\n\n"
-           << "# Загрузка данных\n"
-           << "data_off = np.loadtxt('all_off.dat')\n"
-           << "data_on = np.loadtxt('all_on.dat')\n"
-           << "data_rand = np.loadtxt('random.dat')\n\n"
-           << "# Создание графика\n"
-           << "plt.figure(figsize=(10, 6))\n"
-           << "plt.plot(data_off[:,0], data_off[:,1], 'b-o', "
-           << "label='Все лампочки выключены', linewidth=2, markersize=4)\n"
-           << "plt.plot(data_on[:,0], data_on[:,1], 'r-s', "
-           << "label='Все лампочки включены', linewidth=2, markersize=4)\n"
-           << "plt.plot(data_rand[:,0], data_rand[:,1], 'g-^', "
-           << "label='Случайное распределение', linewidth=2, markersize=4)\n"
-           << "plt.xlabel('Длина поезда (n)', fontsize=12)\n"
-           << "plt.ylabel('Число операций', fontsize=12)\n"
-           << "plt.title('Зависимость числа операций от длины поезда', "
-           << "fontsize=14)\n"
-           << "plt.legend(loc='best', fontsize=10)\n"
-           << "plt.grid(True, alpha=0.3)\n"
-           << "plt.tight_layout()\n"
-           << "plt.savefig('plot.png', dpi=150)\n"
-           << "print('График сохранен в result/plot.png')\n";
-  pyScript.close();
-
   std::cout << "\n=== Эксперимент завершен ===\n";
-  std::cout << "Данные сохранены в result/*.dat\n";
-  std::cout << "Для построения графика выполните:\n";
-  std::cout << "  cd result && python3 plot.py\n";
+  std::cout << "Данные сохранены в файлы:\n";
+  std::cout << "  - result/all_off.dat\n";
+  std::cout << "  - result/all_on.dat\n";
+  std::cout << "  - result/random.dat\n";
 
   return 0;
 }
