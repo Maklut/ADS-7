@@ -1,18 +1,9 @@
-// Copyright 2022 NNTU-CS
+// Copyright 2021 NNTU-CS
 #include "train.h"
 
-Train::Train() : countOp(0), first(nullptr) {}
-
-Train::~Train() {
-  if (first == nullptr) return;
-
-  Car* current = first;
-  Car* nextCar = nullptr;
-  do {
-    nextCar = current->next;
-    delete current;
-    current = nextCar;
-  } while (current != first);
+Train::Train() {
+  first = nullptr;
+  countOp = 0;
 }
 
 void Train::addCar(bool light) {
@@ -27,29 +18,39 @@ void Train::addCar(bool light) {
     first->prev = first;
   } else {
     Car* last = first->prev;
-    last->next = newCar;
-    newCar->prev = last;
     newCar->next = first;
+    newCar->prev = last;
+    last->next = newCar;
     first->prev = newCar;
   }
 }
 
 int Train::getLength() {
-  if (first == nullptr) return 0;
+  Car* start = first;
+  bool saved = start->light;
 
-  countOp = 0;
-  int length = 1;
-  Car* current = first->next;
-  countOp++;
+  start->light = true;
 
-  while (current != first) {
-    length++;
-    current = current->next;
-    countOp++;
-  }
+  while (true) {
+    Car* cur = start;
+    int d = 0;
 
-  return length;
-}
+    do {
+      cur = cur->next;
+      ++countOp;
+      ++d;
+    } while (!cur->light);
+
+    cur->light = false;
+
+    for (int i = 0; i < d; ++i) {
+      cur = cur->prev;
+      ++countOp;
+    }
+
+    if (!start->light) {
+      start->light = saved;
+      return d;
     }
   }
 }
