@@ -1,73 +1,48 @@
 // Copyright 2022 NNTU-CS
 #include <iostream>
-#include <string>
-#include <vector>
-#include <random>
-#include <fstream>
+#include <cstdlib>
+#include <ctime>
 #include "train.h"
 
-void saveData(const std::string& filename,
-              const std::vector<int>& sizes,
-              const std::vector<int>& operations) {
-  std::ofstream out(filename);
-  for (size_t i = 0; i < sizes.size(); i++) {
-    out << sizes[i] << " " << operations[i] << "\n";
-  }
-  out.close();
-}
-
 int main() {
-  std::vector<int> sizes;
-  std::vector<int> ops_all_off;
-  std::vector<int> ops_all_on;
-  std::vector<int> ops_random;
+  std::srand(static_cast<unsigned>(std::time(nullptr)));
 
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_int_distribution<> dist(0, 1);
+  std::cout << "n\tall_off\tall_on\tavg_rand" << std::endl;
 
-  std::cout << "=== Вычислительный эксперимент ===\n";
-  std::cout << "Тестирование длин поезда от 2 до 100\n\n";
-
-  for (int n = 2; n <= 100; n += 2) {
-    sizes.push_back(n);
-
+  for (int n = 2; n <= 30; n += 2) {
     // Тест 1: все лампочки выключены
-    Train train1;
-    for (int i = 0; i < n; i++) {
-      train1.addCar(false);
+    Train train_off;
+    for (int i = 0; i < n; ++i) {
+      train_off.addCar(false);
     }
-    train1.getLength();
-    ops_all_off.push_back(train1.getOpCount());
+    train_off.getLength();
+    int off_steps = train_off.getOpCount();
 
     // Тест 2: все лампочки включены
-    Train train2;
-    for (int i = 0; i < n; i++) {
-      train2.addCar(true);
+    Train train_on;
+    for (int i = 0; i < n; ++i) {
+      train_on.addCar(true);
     }
-    train2.getLength();
-    ops_all_on.push_back(train2.getOpCount());
+    train_on.getLength();
+    int on_steps = train_on.getOpCount();
 
-    // Тест 3: случайное распределение
-    Train train3;
-    for (int i = 0; i < n; i++) {
-      train3.addCar(dist(gen) == 1);
+    // Тест 3: случайное распределение (среднее из 5 попыток)
+    int sum_rand = 0;
+    for (int trial = 0; trial < 5; ++trial) {
+      Train train_rand;
+      for (int i = 0; i < n; ++i) {
+        train_rand.addCar(std::rand() % 2 == 1);
+      }
+      train_rand.getLength();
+      sum_rand += train_rand.getOpCount();
     }
-    train3.getLength();
-    ops_random.push_back(train3.getOpCount());
+    int avg_rand = sum_rand / 5;
 
-    std::cout << "n=" << n << " complete\n";
+    std::cout << n << "\t"
+              << off_steps << "\t"
+              << on_steps << "\t"
+              << avg_rand << std::endl;
   }
-
-  saveData("result/all_off.dat", sizes, ops_all_off);
-  saveData("result/all_on.dat", sizes, ops_all_on);
-  saveData("result/random.dat", sizes, ops_random);
-
-  std::cout << "\n=== Эксперимент завершен ===\n";
-  std::cout << "Данные сохранены в файлы:\n";
-  std::cout << "  - result/all_off.dat\n";
-  std::cout << "  - result/all_on.dat\n";
-  std::cout << "  - result/random.dat\n";
 
   return 0;
 }
